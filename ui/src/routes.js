@@ -1,17 +1,19 @@
-import { replace } from "svelte-spa-router";
 import { wrap } from "svelte-spa-router/wrap";
-import PageIndex from "@/components/PageIndex.svelte";
-import PageCollections from "@/components/collections/PageCollections.svelte";
+import Pocketbase from "@/utils/Pocketbase";
+import PageIndex from "@/components/pages/PageIndex.svelte";
+import PageCollections from "@/components/pages/collections/PageCollections.svelte";
+import PageUserLogin from "@/components/pages/PageUserLogin.svelte";
 
 const routes = {
-    // "/login": wrap({
-    //     component: PageAdminLogin,
-    //     // conditions: [(_) => !ApiClient.authStore.isValid],
-    //     userData: { showAppSidebar: false },
-    // }),
+    "/login": wrap({
+        component: PageUserLogin,
+        conditions: [(_) => !Pocketbase.authStore.isValid],
+        userData: { showAppSidebar: false },
+    }),
 
     "/collections": wrap({
         component: PageCollections,
+        conditions: [(_) => Pocketbase.authStore.isValid],
         userData: { showAppSidebar: true },
     }),
 
@@ -49,8 +51,7 @@ const routes = {
     // catch-all fallback
     "*": wrap({
         component: PageIndex,
-        // TODO: make false
-        userData: { showAppSidebar: true },
+        userData: { showAppSidebar: false },
     }),
 };
 

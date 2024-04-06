@@ -3,6 +3,12 @@
 
     import Router, { replace, link } from "svelte-spa-router";
     import active from "svelte-spa-router/active";
+    import Pocketbase from "@/utils/Pocketbase";
+    import Toasts from "@/components/base/Toasts.svelte";
+    import Toggler from "@/components/base/Toggler.svelte";
+    import tooltip from "@/actions/tooltip";
+    import { user } from "@/stores/user";
+    import { setErrors } from "@/stores/errors";
     import routes from "./routes";
 
     let showAppSidebar = false;
@@ -20,12 +26,16 @@
         // TODO:
         // resets
         // $pageTitle = "";
-        // setErrors({});
+        setErrors({});
         // resetConfirmation();
     }
 
     function handleRouteFailure() {
         replace("/");
+    }
+
+    function logout() {
+        Pocketbase.logout();
     }
 </script>
 
@@ -35,8 +45,7 @@
 </svelte:head>
 
 <div class="app-layout">
-    <!-- {#if $admin?.id && showAppSidebar} -->
-    {#if showAppSidebar}
+    {#if $user?.id && showAppSidebar}
         <aside class="app-sidebar">
             <a href="/" class="logo logo-sm" use:link>
                 <img
@@ -54,6 +63,7 @@
                     aria-label="Collections"
                     use:link
                     use:active={{ path: "/collections/?.*", className: "current-route" }}
+                    use:tooltip={{ text: "Collections", position: "right" }}
                 >
                     <i class="ri-database-2-line" />
                 </a>
@@ -64,17 +74,36 @@
                     aria-label="Settings"
                     use:link
                     use:active={{ path: "/settings/?.*", className: "current-route" }}
+                    use:tooltip={{ text: "Settings", position: "right" }}
                 >
                     <i class="ri-tools-line" />
                 </a>
             </nav>
+
+            <div
+                tabindex="0"
+                role="button"
+                aria-label="Logged admin menu"
+                class="thumb thumb-circle link-hint closable"
+            >
+                <img
+                    src="{import.meta.env.BASE_URL}images/avatars/avatar{$user?.avatar || 0}.svg"
+                    alt="Avatar"
+                    aria-hidden="true"
+                />
+                <Toggler class="dropdown dropdown-nowrap dropdown-upside dropdown-left">
+                    <button type="button" class="dropdown-item closable" role="menuitem" on:click={logout}>
+                        <i class="ri-logout-circle-line" aria-hidden="true" />
+                        <span class="txt">Logout</span>
+                    </button>
+                </Toggler>
+            </div>
         </aside>
     {/if}
 
     <div class="app-body">
         <Router {routes} on:routeLoading={handleRouteLoading} on:conditionsFailed={handleRouteFailure} />
 
-        <!-- TODO: -->
-        <!-- <Toasts /> -->
+        <Toasts />
     </div>
 </div>
