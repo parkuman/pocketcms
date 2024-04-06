@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/fatih/color"
 	"github.com/pocketbase/pocketbase"
   "github.com/pocketbase/pocketbase/core"
   "github.com/parkuman/pocketcms/ui"
@@ -37,13 +38,19 @@ func bindStaticAdminUI(app core.App, e *core.ServeEvent) error {
 func main() {
 	app := pocketbase.New()
 
-app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+  app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
     bindStaticAdminUI(app, e)
 
     return nil
-})
+  })
+
+
+  // TODO:
+	regular := color.New()
+  regular.Printf("└─ CMS Admin UI: %s\n", color.CyanString("%s://%s/admin/", "https", "TODO:"))
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
 	}
+
 }
