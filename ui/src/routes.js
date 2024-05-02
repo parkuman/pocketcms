@@ -2,6 +2,7 @@ import { wrap } from "svelte-spa-router/wrap";
 import Pocketbase from "@/utils/Pocketbase";
 import PageIndex from "@/components/pages/PageIndex.svelte";
 import PageCollections from "@/components/pages/collections/PageCollections.svelte";
+import PageRecord from "@/components/pages/collections/record/PageRecord.svelte";
 import PageUserLogin from "@/components/pages/PageUserLogin.svelte";
 
 const routes = {
@@ -13,6 +14,12 @@ const routes = {
 
     "/collections": wrap({
         component: PageCollections,
+        conditions: [(_) => Pocketbase.authStore.isValid],
+        userData: { showAppSidebar: true },
+    }),
+
+    "/collections/:collection/": wrap({
+        component: PageRecord,
         conditions: [(_) => Pocketbase.authStore.isValid],
         userData: { showAppSidebar: true },
     }),

@@ -20,7 +20,7 @@
         isLoading = true;
 
         return Pocketbase
-            .collection('pcms_users')
+            .collection('pcms__users')
             .authWithPassword(email, password)
             .then(() => {
                 removeAllToasts();

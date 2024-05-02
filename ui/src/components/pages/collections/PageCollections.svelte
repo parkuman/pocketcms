@@ -8,15 +8,25 @@
         loadCollections,
         changeActiveCollectionById,
     } from "@/stores/collections";
+    import tooltip from "@/actions/tooltip";
     import CommonHelper from "@/utils/CommonHelper";
     import { pageTitle, hideControls } from "@/stores/app";
     import PageWrapper from "@/components/base/PageWrapper.svelte";
     import CollectionsSidebar from "@/components/collections/CollectionsSidebar.svelte";
-
+    import RecordsList from "@/components/records/RecordsList.svelte";
+    import RecordsCount from "@/components/records/RecordsCount.svelte";
+    import RefreshButton from "@/components/base/RefreshButton.svelte";
 
     const initialQueryParams = new URLSearchParams($querystring);
 
+    let recordUpsertPanel;
+    let recordPreviewPanel;
+    let recordsList;
+    let recordsCount;
+    let filter = initialQueryParams.get("filter") || "";
+    let sort = initialQueryParams.get("sort") || "-created";
     let selectedCollectionId = initialQueryParams.get("collectionId") || $activeCollection?.id;
+    let totalCount = 0; // used to manully change the count without the need of reloading the recordsCount component
 
     loadCollections(selectedCollectionId);
 
@@ -39,25 +49,12 @@
         normalizeSort();
     }
 
-    $: if (!$isCollectionsLoading && initialQueryParams.get("recordId")) {
-        showRecordById(initialQueryParams.get("recordId"));
-    }
-
     // keep the url params in sync
     $: if (!$isCollectionsLoading && (sort || filter || $activeCollection?.id)) {
         updateQueryParams();
     }
 
     $: $pageTitle = $activeCollection?.name || "Collections";
-
-    // TODO: upsert
-    // async function showRecordById(recordId) {
-    //     await tick(); // ensure that the reactive component params are resolved
-    //
-    //     $activeCollection?.type === "view"
-    //         ? recordPreviewPanel.show(recordId)
-    //         : recordUpsertPanel?.show(recordId);
-    // }
 
     function reset() {
         selectedCollectionId = $activeCollection?.id;
@@ -67,10 +64,6 @@
         updateQueryParams({ recordId: null });
 
         normalizeSort();
-
-        // close any open collection panels
-        collectionUpsertPanel?.forceHide();
-        collectionDocsPanel?.hide();
     }
 
     // ensures that the sort fields exist in the collection
@@ -121,56 +114,47 @@
     </PageWrapper>
 {:else if !$collections.length}
     <PageWrapper center>
-  <p>no collections</p>
+        <p>no collections</p>
     </PageWrapper>
 {:else}
     <CollectionsSidebar />
 
     <PageWrapper class="flex-content">
         <header class="page-header">
-            <!-- <nav class="breadcrumbs"> -->
-            <!--     <div class="breadcrumb-item">Collections</div> -->
-            <!--     <div class="breadcrumb-item">{$activeCollection.name}</div> -->
-            <!-- </nav> -->
-            <!---->
-            <!-- <div class="inline-flex gap-5"> -->
-            <!--     {#if !$hideControls} -->
-            <!--         <button -->
-            <!--             type="button" -->
-            <!--             aria-label="Edit collection" -->
-            <!--             class="btn btn-transparent btn-circle" -->
-            <!--             use:tooltip={{ text: "Edit collection", position: "right" }} -->
-            <!--             on:click={() => collectionUpsertPanel?.show($activeCollection)} -->
-            <!--         > -->
-            <!--             <i class="ri-settings-4-line" /> -->
-            <!--         </button> -->
-            <!--     {/if} -->
-            <!---->
-            <!--     <RefreshButton -->
-            <!--         on:refresh={() => { -->
-            <!--             recordsList?.load(); -->
-            <!--             recordsCount?.reload(); -->
-            <!--         }} -->
-            <!--     /> -->
-            <!-- </div> -->
-            <!---->
-            <!-- <div class="btns-group"> -->
-            <!--     <button -->
-            <!--         type="button" -->
-            <!--         class="btn btn-outline" -->
-            <!--         on:click={() => collectionDocsPanel?.show($activeCollection)} -->
-            <!--     > -->
-            <!--         <i class="ri-code-s-slash-line" /> -->
-            <!--         <span class="txt">API Preview</span> -->
-            <!--     </button> -->
-            <!---->
-            <!--     {#if $activeCollection.type !== "view"} -->
-            <!--         <button type="button" class="btn btn-expanded" on:click={() => recordUpsertPanel?.show()}> -->
-            <!--             <i class="ri-add-line" /> -->
-            <!--             <span class="txt">New record</span> -->
-            <!--         </button> -->
-            <!--     {/if} -->
-            <!-- </div> -->
+            <nav class="breadcrumbs">
+                <div class="breadcrumb-item">Collections</div>
+                <div class="breadcrumb-item">{$activeCollection.name.replace("pcms_", "")}</div>
+            </nav>
+
+            <div class="inline-flex gap-5">
+                {#if !$hideControls}
+                    <button
+                        type="button"
+                        aria-label="Edit collection"
+                        class="btn btn-transparent btn-circle"
+                        use:tooltip={{ text: "Edit collection", position: "right" }}
+                    >
+                        <!-- on:click={() => collectionUpsertPanel?.show($activeCollection)} TODO: -->
+                        <i class="ri-settings-4-line" />
+                    </button>
+                {/if}
+
+                <RefreshButton
+                    on:refresh={() => {
+                        recordsList?.load();
+                        recordsCount?.reload();
+                    }}
+                />
+            </div>
+
+            <div class="btns-group">
+                {#if $activeCollection.type !== "view"}
+                    <button type="button" class="btn btn-expanded" on:click={() => recordUpsertPanel?.show()}>
+                        <i class="ri-add-line" />
+                        <span class="txt">New record</span>
+                    </button>
+                {/if}
+            </div>
         </header>
 
         <!-- <Searchbar -->
@@ -181,36 +165,36 @@
 
         <div class="clearfix m-b-sm" />
 
-        <!-- <RecordsList -->
-        <!--     bind:this={recordsList} -->
-        <!--     collection={$activeCollection} -->
-        <!--     bind:filter -->
-        <!--     bind:sort -->
-        <!--     on:select={(e) => { -->
-        <!--         updateQueryParams({ -->
-        <!--             recordId: e.detail.id, -->
-        <!--         }); -->
-        <!---->
-        <!--         let showModel = e.detail._partial ? e.detail.id : e.detail; -->
-        <!---->
-        <!--         $activeCollection.type === "view" -->
-        <!--             ? recordPreviewPanel?.show(showModel) -->
-        <!--             : recordUpsertPanel?.show(showModel); -->
-        <!--     }} -->
-        <!--     on:delete={() => { -->
-        <!--         recordsCount?.reload(); -->
-        <!--     }} -->
-        <!--     on:new={() => recordUpsertPanel?.show()} -->
-        <!-- /> -->
-        <!---->
-        <!-- <svelte:fragment slot="footer"> -->
-        <!--     <RecordsCount -->
-        <!--         bind:this={recordsCount} -->
-        <!--         class="m-r-auto txt-sm txt-hint" -->
-        <!--         collection={$activeCollection} -->
-        <!--         {filter} -->
-        <!--         bind:totalCount -->
-        <!--     /> -->
-        <!-- </svelte:fragment> -->
+        <RecordsList
+            bind:this={recordsList}
+            collection={$activeCollection}
+            bind:filter
+            bind:sort
+            on:select={(e) => {
+                updateQueryParams({
+                    recordId: e.detail.id,
+                });
+
+                let showModel = e.detail._partial ? e.detail.id : e.detail;
+
+                $activeCollection.type === "view"
+                    ? recordPreviewPanel?.show(showModel)
+                    : recordUpsertPanel?.show(showModel);
+            }}
+            on:delete={() => {
+                recordsCount?.reload();
+            }}
+            on:new={() => recordUpsertPanel?.show()}
+        />
+
+        <svelte:fragment slot="footer">
+            <RecordsCount
+                bind:this={recordsCount}
+                class="m-r-auto txt-sm txt-hint"
+                collection={$activeCollection}
+                {filter}
+                bind:totalCount
+            />
+        </svelte:fragment>
     </PageWrapper>
 {/if}
