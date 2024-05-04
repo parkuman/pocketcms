@@ -112,23 +112,5 @@
             <p class="txt-hint m-t-10 m-b-10 txt-center">No collections found.</p>
         {/if}
     </div>
-
-    {#if !$hideControls}
-        <footer class="sidebar-footer">
-            <button type="button" class="btn btn-block btn-outline" on:click={() => collectionPanel?.show()}>
-                <i class="ri-add-line" />
-                <span class="txt">New collection</span>
-            </button>
-        </footer>
-    {/if}
 </PageSidebar>
-
-<!-- <CollectionUpsertPanel -->
-<!--     bind:this={collectionPanel} -->
-<!--     on:save={(e) => { -->
-<!--         if (e.detail?.isNew && e.detail.collection) { -->
-<!--             selectCollection(e.detail.collection); -->
-<!--         } -->
-<!--     }} -->
-<!-- /> -->
 

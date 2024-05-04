@@ -1,4 +1,5 @@
 <script>
+    import { push } from "svelte-spa-router";
     import { createEventDispatcher } from "svelte";
     import { fly } from "svelte/transition";
     import Pocketbase from "@/utils/Pocketbase";
@@ -33,6 +34,7 @@
     let yieldedRecordsId = 0;
     let columnsTrigger;
     let hiddenColumns = [];
+    let defaultHiddenColumns = ["@id"]; // hide these by default from the users
     let collumnsToHide = [];
     let hiddenColumnsKey = "";
 
@@ -84,6 +86,7 @@
         }),
         hasCreated ? { id: "@created", name: "created" } : [],
         hasUpdated ? { id: "@updated", name: "updated" } : [],
+        { id: "@id", name: "id" },
     );
 
     function updateStoredHiddenColumns() {
@@ -109,6 +112,8 @@
             const encoded = localStorage.getItem(hiddenColumnsKey);
             if (encoded) {
                 hiddenColumns = JSON.parse(encoded) || [];
+            } else {
+                hiddenColumns = defaultHiddenColumns;
             }
         } catch (_) {}
     }
@@ -217,7 +222,7 @@
                     isLoading = false;
                     console.warn(err);
                     clearList();
-                    ApiClient.error(err, !filter || err?.status != 400); // silence filter errors
+                    Pocketbase.error(err, !filter || err?.status != 400); // silence filter errors
                 }
             });
     }
@@ -274,7 +279,7 @@
 
         let promises = [];
         for (const recordId of Object.keys(bulkSelected)) {
-            promises.push(ApiClient.collection(collection.id).delete(recordId));
+            promises.push(Pocketbase.collection(collection.id).delete(recordId));
         }
 
         isDeleting = true;
@@ -290,7 +295,7 @@
                 deselectAllRecords();
             })
             .catch((err) => {
-                ApiClient.error(err);
+                Pocketbase.error(err);
             })
             .finally(() => {
                 isDeleting = false;
@@ -431,8 +436,7 @@
                 <tr
                     tabindex="0"
                     class="row-handle"
-                    on:click={() =>
-                        (window.location.href = `#/collections/${collection.name}?recordId=${record.id}`)}
+                    on:click={() => push(`#/collections/${collection.id}?recordId=${record.id}`)}
                 >
                     {#if !isView}
                         <td class="bulk-select-col min-width">
@@ -545,7 +549,7 @@
                                 <button
                                     type="button"
                                     class="btn btn-secondary btn-expanded m-t-sm"
-                                    on:click={() => dispatch("new")}
+                                    on:click={() => push(`#/collections/${collection.name}`)}
                                 >
                                     <i class="ri-add-line" />
                                     <span class="txt">New record</span>

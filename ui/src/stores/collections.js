@@ -1,6 +1,6 @@
 import { writable, get } from "svelte/store";
-import { pbAdmin } from "@/utils/Pocketbase";
 import CommonHelper from "@/utils/CommonHelper";
+import Pocketbase from "@/utils/Pocketbase";
 
 export const collections = writable([]);
 export const activeCollection = writable({});
@@ -36,9 +36,8 @@ export async function loadCollections(activeId = null) {
     isCollectionsLoading.set(true);
 
     try {
-        await pbAdmin.admins.authWithPassword("parker@prowe.ca", "1111111111");
-        let items = await pbAdmin.collections.getFullList(200, {
-            filter: "name ~ 'pcms_' && name !~ 'pcms__'",
+        let items = await Pocketbase.collection("pcms__collections").getFullList(200, {
+            sort: "+name",
         });
 
         items = CommonHelper.sortCollections(items);

@@ -1,6 +1,6 @@
 <script>
     import { tick } from "svelte";
-    import { querystring } from "svelte-spa-router";
+    import { querystring, push } from "svelte-spa-router";
     import {
         collections,
         activeCollection,
@@ -149,7 +149,11 @@
 
             <div class="btns-group">
                 {#if $activeCollection.type !== "view"}
-                    <button type="button" class="btn btn-expanded" on:click={() => recordUpsertPanel?.show()}>
+                    <button
+                        type="button"
+                        class="btn btn-expanded"
+                        on:click={() => push(`#/collections/${$activeCollection.id}`)}
+                    >
                         <i class="ri-add-line" />
                         <span class="txt">New record</span>
                     </button>

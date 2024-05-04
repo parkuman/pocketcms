@@ -18,7 +18,7 @@ const routes = {
         userData: { showAppSidebar: true },
     }),
 
-    "/collections/:collection/": wrap({
+    "/collections/:collectionId/": wrap({
         component: PageRecord,
         conditions: [(_) => Pocketbase.authStore.isValid],
         userData: { showAppSidebar: true },
