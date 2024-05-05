@@ -3,6 +3,8 @@
 
     import Router, { replace, link } from "svelte-spa-router";
     import active from "svelte-spa-router/active";
+    import Confirmation from "@/components/base/Confirmation.svelte";
+    import { resetConfirmation } from "@/stores/confirmation";
     import Pocketbase from "@/utils/Pocketbase";
     import Toasts from "@/components/base/Toasts.svelte";
     import Toggler from "@/components/base/Toggler.svelte";
@@ -27,7 +29,7 @@
         // resets
         // $pageTitle = "";
         setErrors({});
-        // resetConfirmation();
+        resetConfirmation();
     }
 
     function handleRouteFailure() {
@@ -107,3 +109,5 @@
         <Toasts />
     </div>
 </div>
+
+<Confirmation />

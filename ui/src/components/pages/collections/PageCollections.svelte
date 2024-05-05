@@ -127,18 +127,6 @@
             </nav>
 
             <div class="inline-flex gap-5">
-                {#if !$hideControls}
-                    <button
-                        type="button"
-                        aria-label="Edit collection"
-                        class="btn btn-transparent btn-circle"
-                        use:tooltip={{ text: "Edit collection", position: "right" }}
-                    >
-                        <!-- on:click={() => collectionUpsertPanel?.show($activeCollection)} TODO: -->
-                        <i class="ri-settings-4-line" />
-                    </button>
-                {/if}
-
                 <RefreshButton
                     on:refresh={() => {
                         recordsList?.load();
@@ -161,6 +149,7 @@
             </div>
         </header>
 
+        <!-- TODO: -->
         <!-- <Searchbar -->
         <!--     value={filter} -->
         <!--     autocompleteCollection={$activeCollection} -->

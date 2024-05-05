@@ -11,9 +11,7 @@
     import { addSuccessToast, addErrorToast } from "@/stores/toasts";
     import CollectionsSidebar from "@/components/collections/CollectionsSidebar.svelte";
     import PageWrapper from "@/components/base/PageWrapper.svelte";
-    import Field from "@/components/base/Field.svelte";
     import Toggler from "@/components/base/Toggler.svelte";
-    import ModelDateIcon from "@/components/base/ModelDateIcon.svelte";
     import AuthFields from "@/components/records/fields/AuthFields.svelte";
     import TextField from "@/components/records/fields/TextField.svelte";
     import NumberField from "@/components/records/fields/NumberField.svelte";
@@ -32,12 +30,10 @@
         loadCollections,
         activeCollection,
     } from "@/stores/collections";
-    // import ExternalAuthsList from "@/components/records/ExternalAuthsList.svelte";
 
     const dispatch = createEventDispatcher();
     const formId = "record_" + CommonHelper.randomString(5);
     const tabFormKey = "form";
-    const tabProviderKey = "providers";
 
     export let params;
 
@@ -62,6 +58,7 @@
 
     $: if (!$isCollectionsLoading && $activeCollection.id) {
         load(queryParams.get("recordId"));
+        confirmHide = true;
     }
 
     $: isAuthCollection = $activeCollection?.type === "auth";
@@ -101,6 +98,17 @@
     }
 
     export function hide() {
+        if (hasChanges && confirmHide) {
+            confirm("You have unsaved changes. Do you really want to close this screen?", () => {
+                forceHide();
+            });
+
+            return false;
+        }
+
+        setErrors({});
+        deleteDraft();
+
         push(`#/collections?collectionId=${$activeCollection?.id}`);
     }
 
@@ -493,93 +501,41 @@
                 >
                 <div class="breadcrumb-item">{recordBreadcrumbTitle}</div>
             </nav>
-        </header>
-        <svelte:fragment slot="header">
             {#if isLoading}
                 <span class="loader loader-sm" />
                 <h4 class="panel-title txt-hint">Loading...</h4>
-            {:else}
-                <h4 class="panel-title">
-                    {isNew ? "New" : "Edit"}
-                    <strong>{$activeCollection?.name}</strong> record
-                </h4>
-
-                {#if !isNew}
-                    <div class="flex-fill" />
-                    <div
-                        tabindex="0"
-                        role="button"
-                        aria-label="More record options"
-                        class="btn btn-sm btn-circle btn-transparent flex-gap-0"
-                    >
-                        <i class="ri-more-line" aria-hidden="true" />
-                        <Toggler class="dropdown dropdown-right dropdown-nowrap">
-                            {#if isAuthCollection && !original.verified && original.email}
-                                <button
-                                    type="button"
-                                    class="dropdown-item closable"
-                                    role="menuitem"
-                                    on:click={() => sendVerificationEmail()}
-                                >
-                                    <i class="ri-mail-check-line" />
-                                    <span class="txt">Send verification email</span>
-                                </button>
-                            {/if}
-                            {#if isAuthCollection && original.email}
-                                <button
-                                    type="button"
-                                    class="dropdown-item closable"
-                                    role="menuitem"
-                                    on:click={() => sendPasswordResetEmail()}
-                                >
-                                    <i class="ri-mail-lock-line" />
-                                    <span class="txt">Send password reset email</span>
-                                </button>
-                            {/if}
-                            <button
-                                type="button"
-                                class="dropdown-item closable"
-                                role="menuitem"
-                                on:click={() => duplicateConfirm()}
-                            >
-                                <i class="ri-file-copy-line" />
-                                <span class="txt">Duplicate</span>
-                            </button>
-                            <button
-                                type="button"
-                                class="dropdown-item txt-danger closable"
-                                role="menuitem"
-                                on:click|preventDefault|stopPropagation={() => deleteConfirm()}
-                            >
-                                <i class="ri-delete-bin-7-line" />
-                                <span class="txt">Delete</span>
-                            </button>
-                        </Toggler>
-                    </div>
-                {/if}
-            {/if}
-
-            {#if isAuthCollection && !isNew}
-                <div class="tabs-header stretched">
-                    <button
-                        type="button"
-                        class="tab-item"
-                        class:active={activeTab === tabFormKey}
-                        on:click={() => (activeTab = tabFormKey)}
-                    >
-                        Account
-                    </button>
-                    <button
-                        type="button"
-                        class="tab-item"
-                        class:active={activeTab === tabProviderKey}
-                        on:click={() => (activeTab = tabProviderKey)}
-                    >
-                        Authorized providers
-                    </button>
+            {:else if !isNew}
+                <div class="flex-fill" />
+                <div
+                    tabindex="0"
+                    role="button"
+                    aria-label="More record options"
+                    class="btn btn-sm btn-circle btn-transparent flex-gap-0"
+                >
+                    <i class="ri-more-line" aria-hidden="true" />
+                    <Toggler class="dropdown dropdown-right dropdown-nowrap">
+                        <button
+                            type="button"
+                            class="dropdown-item closable"
+                            role="menuitem"
+                            on:click={() => duplicateConfirm()}
+                        >
+                            <i class="ri-file-copy-line" />
+                            <span class="txt">Duplicate</span>
+                        </button>
+                        <button
+                            type="button"
+                            class="dropdown-item txt-danger closable"
+                            role="menuitem"
+                            on:click|preventDefault|stopPropagation={() => deleteConfirm()}
+                        >
+                            <i class="ri-delete-bin-7-line" />
+                            <span class="txt">Delete</span>
+                        </button>
+                    </Toggler>
                 </div>
             {/if}
-        </svelte:fragment>
+        </header>
 
         <div class="tabs-content no-animations">
             <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->

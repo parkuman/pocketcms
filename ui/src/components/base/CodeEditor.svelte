@@ -54,11 +54,6 @@
     } from "@codemirror/autocomplete";
     import { html as htmlLang } from "@codemirror/lang-html";
     import { json as jsonLang } from "@codemirror/lang-json";
-    import { sql, SQLDialect } from "@codemirror/lang-sql";
-    import { javascript as javascriptLang } from "@codemirror/lang-javascript";
-    // ---
-    import CommonHelper from "@/utils/CommonHelper";
-    import { collections } from "@/stores/collections";
 
     const dispatch = createEventDispatcher();
 
@@ -163,43 +158,6 @@
                 return htmlLang();
             case "json":
                 return jsonLang();
-            case "sql-create-index":
-                return sql({
-                    // lightweight sql dialect with mostly SELECT statements keywords
-                    dialect: SQLDialect.define({
-                        keywords:
-                            "create unique index if not exists on collate asc desc where like isnull notnull " +
-                            "date time datetime unixepoch strftime lower upper substr " +
-                            "case when then iif if else json_extract json_each json_tree json_array_length json_valid ",
-                        operatorChars: "*+-%<>!=&|/~",
-                        identifierQuotes: '`"',
-                        specialVar: "@:?$",
-                    }),
-                    upperCaseKeywords: true,
-                });
-            case "sql-select":
-                let schema = {};
-                for (let collection of $collections) {
-                    schema[collection.name] = CommonHelper.getAllCollectionIdentifiers(collection);
-                }
-
-                return sql({
-                    // lightweight sql dialect with mostly SELECT statements keywords
-                    dialect: SQLDialect.define({
-                        keywords:
-                            "select distinct from where having group by order limit offset join left right inner with like not in match asc desc regexp isnull notnull glob " +
-                            "count avg sum min max current random cast as int real text bool " +
-                            "date time datetime unixepoch strftime coalesce lower upper substr " +
-                            "case when then iif if else json_extract json_each json_tree json_array_length json_valid ",
-                        operatorChars: "*+-%<>!=&|/~",
-                        identifierQuotes: '`"',
-                        specialVar: "@:?$",
-                    }),
-                    schema: schema,
-                    upperCaseKeywords: true,
-                });
-            default:
-                return javascriptLang();
         }
     }
 
