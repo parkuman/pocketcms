@@ -7,21 +7,7 @@ before:
     - go mod tidy
 
 builds:
-  # used only for tests
-  - id: build_cgo
-    main: ./examples/base
-    binary: pocketcms
-    ldflags:
-      - -s -w -X github.com/parkuman/pocketcms.Version={{ .Version }}
-    env:
-      - CGO_ENABLED=1
-    goos:
-      - linux
-    goarch:
-      - amd64
-
   - id: build_noncgo
-    main: ./examples/base
     binary: pocketcms
     ldflags:
       - -s -w -X github.com/parkuman/pocketcms.Version={{ .Version }}
