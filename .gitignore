@@ -1,6 +1,9 @@
 /.vscode/
 .idea
 
+# pocketbase
+/pb_data/
+
 .DS_Store
 
 # goreleaser builds folder
