@@ -2,17 +2,17 @@ package main
 
 import (
 	"github.com/fatih/color"
-	"github.com/pocketbase/pocketbase"
-  "github.com/pocketbase/pocketbase/core"
-  "github.com/parkuman/pocketcms/ui"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
+	"github.com/parkuman/pocketcms/ui"
+	"github.com/pocketbase/pocketbase"
+	"github.com/pocketbase/pocketbase/core"
 	"log"
-  "strings"
-  "net/http"
+	"net/http"
+	"strings"
 )
 
-const cmsAdminPath = "/admin/"
+const cmsAdminPath = "/cms/"
 
 func bindStaticAdminUI(app core.App, e *core.ServeEvent) error {
 	// redirect to trailing slash to ensure that relative urls will still work properly
@@ -34,20 +34,18 @@ func bindStaticAdminUI(app core.App, e *core.ServeEvent) error {
 	return nil
 }
 
-
 func main() {
 	app := pocketbase.New()
 
-  app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-    bindStaticAdminUI(app, e)
+	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+		bindStaticAdminUI(app, e)
 
-    return nil
-  })
+		return nil
+	})
 
-
-  // TODO:
+	// TODO:
 	regular := color.New()
-  regular.Printf("└─ CMS Admin UI: %s\n", color.CyanString("%s://%s/admin/", "https", "TODO:"))
+	regular.Printf("└─ CMS Admin UI: %s\n", color.CyanString("%s://%s%s", "https", "TODO:", cmsAdminPath))
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
