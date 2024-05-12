@@ -1,5 +1,6 @@
 import PocketBase, { LocalAuthStore } from "pocketbase";
 import { replace } from "svelte-spa-router";
+import { setErrors } from "@/stores/errors";
 import { setUser } from "@/stores/user";
 import { addErrorToast } from "@/stores/toasts";
 import CommonHelper from "@/utils/CommonHelper";

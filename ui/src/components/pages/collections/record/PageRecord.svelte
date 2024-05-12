@@ -497,10 +497,11 @@
             <nav class="breadcrumbs">
                 <div class="breadcrumb-item">Collections</div>
                 <a href="#/collections?collectionId={$activeCollection.id}" class="breadcrumb-item"
-                    >{$activeCollection.name.replace("pcms_", "")}</a
+                    >{CommonHelper.replacePcmsPrefix($activeCollection.name)}</a
                 >
                 <div class="breadcrumb-item">{recordBreadcrumbTitle}</div>
             </nav>
+
             {#if isLoading}
                 <span class="loader loader-sm" />
                 <h4 class="panel-title txt-hint">Loading...</h4>
@@ -523,17 +524,39 @@
                             <i class="ri-file-copy-line" />
                             <span class="txt">Duplicate</span>
                         </button>
-                        <button
-                            type="button"
-                            class="dropdown-item txt-danger closable"
-                            role="menuitem"
-                            on:click|preventDefault|stopPropagation={() => deleteConfirm()}
-                        >
-                            <i class="ri-delete-bin-7-line" />
-                            <span class="txt">Delete</span>
-                        </button>
+                        {#if $activeCollection.deleteRule}
+                            <button
+                                type="button"
+                                class="dropdown-item txt-danger closable"
+                                role="menuitem"
+                                on:click|preventDefault|stopPropagation={() => deleteConfirm()}
+                            >
+                                <i class="ri-delete-bin-7-line" />
+                                <span class="txt">Delete</span>
+                            </button>
+                        {/if}
                     </Toggler>
                 </div>
+                <button
+                    type="button"
+                    class="btn btn-transparent"
+                    disabled={isSaving || isLoading}
+                    on:click={() => hide()}
+                >
+                    <span class="txt">Cancel</span>
+                </button>
+
+                {#if $activeCollection.updateRule !== null}
+                    <button
+                        type="submit"
+                        form={formId}
+                        class="btn btn-expanded"
+                        class:btn-loading={isSaving || isLoading}
+                        disabled={!canSave || isSaving}
+                    >
+                        <span class="txt">{isNew ? "Create" : "Save changes"}</span>
+                    </button>
+                {/if}
             {/if}
         </header>
 
@@ -645,27 +668,6 @@
             <!--     </div> -->
             <!-- {/if} -->
         </div>
-
-        <svelte:fragment slot="footer">
-            <button
-                type="button"
-                class="btn btn-transparent"
-                disabled={isSaving || isLoading}
-                on:click={() => hide()}
-            >
-                <span class="txt">Cancel</span>
-            </button>
-
-            <button
-                type="submit"
-                form={formId}
-                class="btn btn-expanded"
-                class:btn-loading={isSaving || isLoading}
-                disabled={!canSave || isSaving}
-            >
-                <span class="txt">{isNew ? "Create" : "Save changes"}</span>
-            </button>
-        </svelte:fragment>
     </PageWrapper>
 {/if}
 

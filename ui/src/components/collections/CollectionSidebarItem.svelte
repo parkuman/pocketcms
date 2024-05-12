@@ -28,7 +28,7 @@
     use:link
 >
     <i class={CommonHelper.getCollectionTypeIcon(collection.type)} aria-hidden="true" />
-    <span class="txt m-r-auto">{collection.name.replace("pcms_", "")}</span>
+    <span class="txt m-r-auto">{CommonHelper.replacePcmsPrefix(collection.name)}</span>
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <span

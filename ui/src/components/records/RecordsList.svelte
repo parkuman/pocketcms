@@ -7,7 +7,7 @@
     import tooltip from "@/actions/tooltip";
     import { confirm } from "@/stores/confirmation";
     import { addSuccessToast } from "@/stores/toasts";
-    import { collections } from "@/stores/collections";
+    import { collections, activeCollection } from "@/stores/collections";
     import SortHeader from "@/components/base/SortHeader.svelte";
     import Toggler from "@/components/base/Toggler.svelte";
     import Field from "@/components/base/Field.svelte";
@@ -545,11 +545,11 @@
                                 >
                                     <span class="txt">Clear filters</span>
                                 </button>
-                            {:else if !isView}
+                            {:else if !isView && $activeCollection.createRule !== null}
                                 <button
                                     type="button"
                                     class="btn btn-secondary btn-expanded m-t-sm"
-                                    on:click={() => push(`#/collections/${collection.name}`)}
+                                    on:click={() => push(`#/collections/${collection.id}`)}
                                 >
                                     <i class="ri-add-line" />
                                     <span class="txt">New record</span>

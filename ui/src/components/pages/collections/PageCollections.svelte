@@ -16,6 +16,7 @@
     import RecordsList from "@/components/records/RecordsList.svelte";
     import RecordsCount from "@/components/records/RecordsCount.svelte";
     import RefreshButton from "@/components/base/RefreshButton.svelte";
+    import Searchbar from "@/components/base/Searchbar.svelte";
 
     const initialQueryParams = new URLSearchParams($querystring);
 
@@ -123,7 +124,7 @@
         <header class="page-header">
             <nav class="breadcrumbs">
                 <div class="breadcrumb-item">Collections</div>
-                <div class="breadcrumb-item">{$activeCollection.name.replace("pcms_", "")}</div>
+                <div class="breadcrumb-item">{CommonHelper.replacePcmsPrefix($activeCollection.name)}</div>
             </nav>
 
             <div class="inline-flex gap-5">
@@ -136,7 +137,7 @@
             </div>
 
             <div class="btns-group">
-                {#if $activeCollection.type !== "view"}
+                {#if $activeCollection.type !== "view" && $activeCollection.createRule !== null}
                     <button
                         type="button"
                         class="btn btn-expanded"
@@ -149,12 +150,11 @@
             </div>
         </header>
 
-        <!-- TODO: -->
-        <!-- <Searchbar -->
-        <!--     value={filter} -->
-        <!--     autocompleteCollection={$activeCollection} -->
-        <!--     on:submit={(e) => (filter = e.detail)} -->
-        <!-- /> -->
+        <Searchbar
+            value={filter}
+            autocompleteCollection={$activeCollection}
+            on:submit={(e) => (filter = e.detail)}
+        />
 
         <div class="clearfix m-b-sm" />
 

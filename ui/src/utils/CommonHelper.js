@@ -2289,4 +2289,8 @@ export default class CommonHelper {
         }
         window.location.replace(href + hash);
     }
+
+    static replacePcmsPrefix(string) {
+        return string.replace("pcms_", "");
+    }
 }

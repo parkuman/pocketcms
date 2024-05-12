@@ -4,12 +4,14 @@
     import Router, { replace, link } from "svelte-spa-router";
     import active from "svelte-spa-router/active";
     import Confirmation from "@/components/base/Confirmation.svelte";
+    import CommonHelper from "@/utils/CommonHelper";
     import { resetConfirmation } from "@/stores/confirmation";
     import Pocketbase from "@/utils/Pocketbase";
     import Toasts from "@/components/base/Toasts.svelte";
     import Toggler from "@/components/base/Toggler.svelte";
     import tooltip from "@/actions/tooltip";
     import { user } from "@/stores/user";
+    import { pageTitle, appName } from "@/stores/app";
     import { setErrors } from "@/stores/errors";
     import routes from "./routes";
 
@@ -25,9 +27,7 @@
 
         oldLocation = e?.detail?.location;
 
-        // TODO:
-        // resets
-        // $pageTitle = "";
+        $pageTitle = "";
         setErrors({});
         resetConfirmation();
     }
@@ -42,8 +42,7 @@
 </script>
 
 <svelte:head>
-    <!-- TODO: -->
-    <title>PocketCMS</title>
+    <title>{CommonHelper.joinNonEmpty([$pageTitle, $appName, "PocketCMS"], " - ")}</title>
 </svelte:head>
 
 <div class="app-layout">
@@ -69,7 +68,6 @@
                 >
                     <i class="ri-database-2-line" />
                 </a>
-                <!-- TODO: tooltip -->
                 <a
                     href="/settings"
                     class="menu-item"
