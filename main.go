@@ -36,7 +36,7 @@ func bindStaticAdminUI(e *core.ServeEvent) error {
 	return nil
 }
 
-func addPcmsUsersCollection(app core.App) {
+func addPcmsUsersCollection(app core.App, overwrite bool) {
 	collection, err := app.Dao().FindCollectionByNameOrId("users")
 	_, pcms_err := app.Dao().FindCollectionByNameOrId("pcms__users")
 
@@ -46,18 +46,26 @@ func addPcmsUsersCollection(app core.App) {
 	}
 
 	// if pcms__users doesn't exist
-	if pcms_err != nil {
-		// Clone the "users" collection to new collection "pcms__users"
-		pcms_users_collection := &models.Collection{
-			Name:       "pcms__users",
-			Type:       models.CollectionTypeAuth,
-			Schema:     collection.Schema,
-			ListRule:   collection.ListRule,
-			ViewRule:  collection.ViewRule,
-			CreateRule: collection.CreateRule,
-			UpdateRule: collection.UpdateRule,
-			DeleteRule: collection.DeleteRule,
-			Options:    collection.Options,
+	if err == nil && pcms_err != nil{
+
+		var pcms_users_collection *models.Collection = nil
+
+		if !overwrite {
+			// Clone the "users" collection to new collection "pcms__users"
+			pcms_users_collection = &models.Collection{
+				Name:       "pcms__users",
+				Type:       models.CollectionTypeAuth,
+				Schema:     collection.Schema,
+				ListRule:   collection.ListRule,
+				ViewRule:   collection.ViewRule,
+				CreateRule: collection.CreateRule,
+				UpdateRule: collection.UpdateRule,
+				DeleteRule: collection.DeleteRule,
+				Options:    collection.Options,
+			}
+		} else {
+			pcms_users_collection = collection
+			pcms_users_collection.Name = "pcms__users"
 		}
 
 		// Save the new collection "pcms__users"
@@ -73,7 +81,7 @@ func main() {
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		bindStaticAdminUI(e)
-		addPcmsUsersCollection(app)
+		addPcmsUsersCollection(app, false)
 		return nil
 	})
 
