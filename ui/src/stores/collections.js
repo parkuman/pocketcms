@@ -1,6 +1,7 @@
 import { writable, get } from "svelte/store";
 import CommonHelper from "@/utils/CommonHelper";
 import Pocketbase from "@/utils/Pocketbase";
+import { addErrorToast } from "@/stores/toasts";
 
 export const collections = writable([]);
 export const activeCollection = writable({});
@@ -51,6 +52,7 @@ export async function loadCollections(activeId = null) {
             activeCollection.set(items[0]);
         }
     } catch (err) {
+        addErrorToast("Failed to load, please make sure collection pcms__collections exists");
         Pocketbase.error(err);
     }
 
