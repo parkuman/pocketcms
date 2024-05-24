@@ -486,9 +486,11 @@
         </div>
     </PageWrapper>
 {:else if !$collections.length}
-    <PageWrapper center>
-        <p>no collections</p>
-    </PageWrapper>
+<PageWrapper center class="center-content">
+    <div class="content txt-hint">
+        <p>No Collections</p>
+    </div>
+</PageWrapper>
 {:else}
     <CollectionsSidebar />
 
