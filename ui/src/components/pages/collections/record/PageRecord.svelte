@@ -488,6 +488,7 @@
 {:else if !$collections.length}
 <PageWrapper center class="center-content">
     <div class="content txt-hint">
+        <i class="ri-folder-open-line txt-disabled" />
         <p>No Collections</p>
     </div>
 </PageWrapper>
