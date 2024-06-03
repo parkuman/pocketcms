@@ -4,7 +4,8 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "pocketbase-serve": "cd .. && go run main.go serve"
     },
     "type": "module",
     "prettier": {
@@ -21,6 +22,7 @@
         "@codemirror/legacy-modes": "^6.4.0",
         "@codemirror/search": "^6.5.6",
         "@codemirror/view": "^6.26.3",
+        "@codemirror/state": "^6.4.1",
         "@sveltejs/vite-plugin-svelte": "^3.0.1",
         "luxon": "^3.4.4",
         "pocketbase": "^0.20.0",

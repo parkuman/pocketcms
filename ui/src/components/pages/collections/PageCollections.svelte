@@ -1,5 +1,4 @@
 <script>
-    import { tick } from "svelte";
     import { querystring, push } from "svelte-spa-router";
     import {
         collections,
@@ -8,9 +7,8 @@
         loadCollections,
         changeActiveCollectionById,
     } from "@/stores/collections";
-    import tooltip from "@/actions/tooltip";
     import CommonHelper from "@/utils/CommonHelper";
-    import { pageTitle, hideControls } from "@/stores/app";
+    import { pageTitle } from "@/stores/app";
     import PageWrapper from "@/components/base/PageWrapper.svelte";
     import CollectionsSidebar from "@/components/collections/CollectionsSidebar.svelte";
     import RecordsList from "@/components/records/RecordsList.svelte";
@@ -114,8 +112,11 @@
         </div>
     </PageWrapper>
 {:else if !$collections.length}
-    <PageWrapper center>
-        <p>no collections</p>
+    <PageWrapper center class="center-content">
+        <div class="content txt-hint">
+            <i class="ri-folder-open-line txt-disabled" />
+            <p>No Collections</p>
+        </div>
     </PageWrapper>
 {:else}
     <CollectionsSidebar />

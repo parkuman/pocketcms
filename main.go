@@ -1,20 +1,21 @@
 package main
 
 import (
+	"log"
+	"net/http"
+	"strings"
+
 	"github.com/fatih/color"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 	"github.com/parkuman/pocketcms/ui"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
-	"log"
-	"net/http"
-	"strings"
 )
 
 const cmsAdminPath = "/cms/"
 
-func bindStaticAdminUI(app core.App, e *core.ServeEvent) error {
+func bindStaticAdminUI(e *core.ServeEvent) error {
 	// redirect to trailing slash to ensure that relative urls will still work properly
 	e.Router.GET(
 		strings.TrimRight(cmsAdminPath, "/"),
@@ -38,7 +39,7 @@ func main() {
 	app := pocketbase.New()
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		bindStaticAdminUI(app, e)
+		bindStaticAdminUI(e)
 
 		return nil
 	})

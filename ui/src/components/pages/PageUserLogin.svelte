@@ -39,7 +39,7 @@
 <FullPage>
     <form class="block" on:submit|preventDefault={login}>
         <div class="content txt-center m-b-base">
-            <h4>Admin sign in</h4>
+            <h4>CMS admin sign in</h4>
         </div>
 
         <Field class="form-field required" name="identity" let:uniqueId>
