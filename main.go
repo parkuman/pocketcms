@@ -11,7 +11,6 @@ import (
 	"github.com/parkuman/pocketcms/ui"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
-	"github.com/pocketbase/pocketbase/models"
 )
 
 const cmsAdminPath = "/cms/"
@@ -36,52 +35,12 @@ func bindStaticAdminUI(e *core.ServeEvent) error {
 	return nil
 }
 
-func addPcmsUsersCollection(app core.App, overwrite bool) {
-	collection, err := app.Dao().FindCollectionByNameOrId("users")
-	_, pcms_err := app.Dao().FindCollectionByNameOrId("pcms__users")
-
-	// if "users" collection doesn't exist
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// if pcms__users doesn't exist
-	if err == nil && pcms_err != nil{
-
-		var pcms_users_collection *models.Collection = nil
-
-		if !overwrite {
-			// Clone the "users" collection to new collection "pcms__users"
-			pcms_users_collection = &models.Collection{
-				Name:       "pcms__users",
-				Type:       models.CollectionTypeAuth,
-				Schema:     collection.Schema,
-				ListRule:   collection.ListRule,
-				ViewRule:   collection.ViewRule,
-				CreateRule: collection.CreateRule,
-				UpdateRule: collection.UpdateRule,
-				DeleteRule: collection.DeleteRule,
-				Options:    collection.Options,
-			}
-		} else {
-			pcms_users_collection = collection
-			pcms_users_collection.Name = "pcms__users"
-		}
-
-		// Save the new collection "pcms__users"
-		if err := app.Dao().SaveCollection(pcms_users_collection); err != nil {
-			log.Fatal(err)
-		}
-	}
-
-}
-
 func main() {
 	app := pocketbase.New()
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		bindStaticAdminUI(e)
-		addPcmsUsersCollection(app, false)
+
 		return nil
 	})
 
