@@ -12,7 +12,7 @@ as its foundation. PocketCMS offers:
 
 # Instructions
 
-By installing PocketCMS, you are essentially also installing [PocketBase](https://pocketbase.io) with some additional features and an additional . The instructions are therefore very similar to PocketBase's.
+By installing PocketCMS, you are essentially also installing [PocketBase](https://pocketbase.io) with some additional features adn an additional embedded single-page-application acting as the CMS admin portal. The instructions for deploying are therefore very similar to PocketBase's.
 
 To run as a standalone application, download the prebuilt executable from the Releases page. Once downloaded, extract the archive and run `./pocketcms serve` in the extracted directory.
 
@@ -28,7 +28,7 @@ From there, PocketBase will run in its usual path of `localhost:8090/_/` and Poc
 6. voila!
 
 Now that you are set up, any collections you create inside PocketBase prefixed with
-`pcms__` and with api rules **not** set to admin only, those collections will be
+`pcms_` and with api rules **not** set to admin only, those collections will be
 available in PocketCMS.
 
 # Development
