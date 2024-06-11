@@ -7,18 +7,20 @@
 PocketCMS is an open source content management system leveraging [PocketBase](https://pocketbase.io)
 as its foundation. PocketCMS offers:
 
-- a client-facing CMS portal _alongside_ PocketBase's admin UI
+- a user-facing CMS admin portal _alongside_ PocketBase's admin UI
 - using PocketBase's [client-side SDKs](https://pocketbase.io/docs/client-side-sdks/) within your application for fetching data from PocketCMS
 
-# Instructions
+PocketCMS's mission is to bring the simplicity of PocketBase's developer experience and admin interface to less tech-savvy users who only need to focus on managing website content.
 
-By installing PocketCMS, you are essentially also installing [PocketBase](https://pocketbase.io) with some additional features adn an additional embedded single-page-application acting as the CMS admin portal. The instructions for deploying are therefore very similar to PocketBase's.
+## Instructions
+
+By installing PocketCMS, you are essentially also installing [PocketBase](https://pocketbase.io) with some additional features and plus another embedded single-page-application acting as the CMS admin portal. The instructions for deploying are therefore very similar to PocketBase's.
 
 To run as a standalone application, download the prebuilt executable from the Releases page. Once downloaded, extract the archive and run `./pocketcms serve` in the extracted directory.
 
 From there, PocketBase will run in its usual path of `localhost:8090/_/` and PocketCMS will run at `localhost:8090/cms/`. Before using PocketCMS, some initial collection and user setup is required.
 
-## Initial Setup
+### Initial Setup
 
 1. log in to pocketbase
 2. create an auth collection called `pcms__users`
@@ -31,11 +33,13 @@ Now that you are set up, any collections you create inside PocketBase prefixed w
 `pcms_` and with api rules **not** set to admin only, those collections will be
 available in PocketCMS.
 
-# Development
+To fetch from these collections, you can use the PocketBase client-side SDKs just as you would any other PocketBase collection! For more information on fetching data from PokcetCMS/PocketBase, see [PocketBase's documentation](https://pocketbase.io/docs/client-side-sdks/).
+
+## Development
 
 Feel free to raise issues and PRs! Any suggestions are welcome.
 
-## To run pocketbase and pocketcms
+### To run pocketbase and pocketcms
 
 1. Clone the repo
 2. run
@@ -45,7 +49,7 @@ go mod tidy
 go run main.go serve
 ```
 
-## UI Development
+### UI Development
 
 1. Run pocketcms like above
 2. in another terminal, open the `ui/` dir and run:
