@@ -80,7 +80,7 @@ class AppAuthStore extends LocalAuthStore {
     }
 }
 
-const pb = new PocketBase(import.meta.env.PB_BACKEND_URL, new AppAuthStore("pcms_user_auth"));
+const pb = new PocketBase(import.meta.env.PCMS_BACKEND_URL, new AppAuthStore("pcms_user_auth"));
 
 if (pb.authStore.model) {
     setUser(pb.authStore.model);

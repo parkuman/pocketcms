@@ -55,7 +55,7 @@ go run main.go serve
 2. in another terminal, open the `ui/` dir and run:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 which should spin up vite at `localhost:3000`. This will give you all the HMR goodness.

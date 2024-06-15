@@ -5,22 +5,34 @@ import PageCollections from "@/components/pages/collections/PageCollections.svel
 import PageRecord from "@/components/pages/collections/record/PageRecord.svelte";
 import PageUserLogin from "@/components/pages/PageUserLogin.svelte";
 
+const baseConditions = [
+    async (details) => {
+        const realQueryParams = new URLSearchParams(window.location.search);
+
+        if (details.location !== "/" && realQueryParams.has(import.meta.env.PCMS_INSTALLER_PARAM)) {
+            return replace("/");
+        }
+
+        return true;
+    },
+];
+
 const routes = {
     "/login": wrap({
         component: PageUserLogin,
-        conditions: [(_) => !Pocketbase.authStore.isValid],
+        conditions: baseConditions.concat([(_) => !Pocketbase.authStore.isValid]),
         userData: { showAppSidebar: false },
     }),
 
     "/collections": wrap({
         component: PageCollections,
-        conditions: [(_) => Pocketbase.authStore.isValid],
+        conditions: baseConditions.concat([(_) => Pocketbase.authStore.isValid]),
         userData: { showAppSidebar: true },
     }),
 
     "/collections/:collectionId/": wrap({
         component: PageRecord,
-        conditions: [(_) => Pocketbase.authStore.isValid],
+        conditions: baseConditions.concat([(_) => Pocketbase.authStore.isValid]),
         userData: { showAppSidebar: true },
     }),
 
