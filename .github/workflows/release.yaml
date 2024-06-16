@@ -13,10 +13,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.11.0
+          cache: "pnpm"
+          cache-dependency-path: ui/pnpm-lock.yaml
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -27,7 +34,7 @@ jobs:
       # but its here to ensure that each release embeds the latest admin ui artifacts.
       # If the artificats differs, a "dirty error" is thrown - https://goreleaser.com/errors/dirty/
       - name: Build CMS Admin dashboard UI
-        run: npm --prefix=./ui ci && npm --prefix=./ui run build
+        run: pnpm --prefix=./ui i && pnpm --prefix=./ui run build
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3
