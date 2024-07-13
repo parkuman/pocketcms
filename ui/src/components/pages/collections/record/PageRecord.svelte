@@ -63,8 +63,6 @@
 
     $: isAuthCollection = $activeCollection?.type === "auth";
 
-    $: hasEditorField = !!$activeCollection?.schema?.find((f) => f.type === "editor");
-
     $: hasTextField = $activeCollection?.schema?.find((f) => f.type === "text");
     $: recordBreadcrumbTitle = hasTextField ? record[hasTextField.name] : "record"; // select the first text field as the breadcrumb title
 
@@ -486,12 +484,12 @@
         </div>
     </PageWrapper>
 {:else if !$collections.length}
-<PageWrapper center class="center-content">
-    <div class="content txt-hint">
-        <i class="ri-folder-open-line txt-disabled" />
-        <p>No Collections</p>
-    </div>
-</PageWrapper>
+    <PageWrapper center class="center-content">
+        <div class="content txt-hint">
+            <i class="ri-folder-open-line txt-disabled" />
+            <p>No Collections</p>
+        </div>
+    </PageWrapper>
 {:else}
     <CollectionsSidebar />
 
@@ -508,38 +506,40 @@
             {#if isLoading}
                 <span class="loader loader-sm" />
                 <h4 class="panel-title txt-hint">Loading...</h4>
-            {:else if !isNew}
+            {:else}
                 <div class="flex-fill" />
-                <div
-                    tabindex="0"
-                    role="button"
-                    aria-label="More record options"
-                    class="btn btn-sm btn-circle btn-transparent flex-gap-0"
-                >
-                    <i class="ri-more-line" aria-hidden="true" />
-                    <Toggler class="dropdown dropdown-right dropdown-nowrap">
-                        <button
-                            type="button"
-                            class="dropdown-item closable"
-                            role="menuitem"
-                            on:click={() => duplicateConfirm()}
-                        >
-                            <i class="ri-file-copy-line" />
-                            <span class="txt">Duplicate</span>
-                        </button>
-                        {#if $activeCollection.deleteRule}
+                {#if !isNew}
+                    <div
+                        tabindex="0"
+                        role="button"
+                        aria-label="More record options"
+                        class="btn btn-sm btn-circle btn-transparent flex-gap-0"
+                    >
+                        <i class="ri-more-line" aria-hidden="true" />
+                        <Toggler class="dropdown dropdown-right dropdown-nowrap">
                             <button
                                 type="button"
-                                class="dropdown-item txt-danger closable"
+                                class="dropdown-item closable"
                                 role="menuitem"
-                                on:click|preventDefault|stopPropagation={() => deleteConfirm()}
+                                on:click={() => duplicateConfirm()}
                             >
-                                <i class="ri-delete-bin-7-line" />
-                                <span class="txt">Delete</span>
+                                <i class="ri-file-copy-line" />
+                                <span class="txt">Duplicate</span>
                             </button>
-                        {/if}
-                    </Toggler>
-                </div>
+                            {#if $activeCollection.deleteRule}
+                                <button
+                                    type="button"
+                                    class="dropdown-item txt-danger closable"
+                                    role="menuitem"
+                                    on:click|preventDefault|stopPropagation={() => deleteConfirm()}
+                                >
+                                    <i class="ri-delete-bin-7-line" />
+                                    <span class="txt">Delete</span>
+                                </button>
+                            {/if}
+                        </Toggler>
+                    </div>
+                {/if}
                 <button
                     type="button"
                     class="btn btn-transparent"
@@ -549,7 +549,7 @@
                     <span class="txt">Cancel</span>
                 </button>
 
-                {#if $activeCollection.updateRule !== null}
+                {#if $activeCollection.updateRule !== null || $activeCollection.createRule !== null}
                     <button
                         type="submit"
                         form={formId}
